@@ -12,18 +12,24 @@ int cutFence(const vector<int>& h, int left, int right)
     int rightArea = cutFence(h, mid+1, right);
     int ret = max(leftArea, rightArea);
 
-    int center = h[mid] <= h[mid+1] ? mid : mid+1;
+    int height = min(h[mid], h[mid+1]);
+    int i = mid, j = mid+1, width = 2;
+    ret = max(ret, height*width);
+    while(left <= i-1 || j+1 <= right) {
+        if(j+1 > right || (left <= i-1 && h[i-1] >= h[j+1])) {
+            i--;
+            width++;
+            height = min(height, h[i]);
+        }
+        else {
+            j++;
+            width++;
+            height = min(height, h[j]);
+        }
 
-    int width=0, i=mid, j=mid+1;
-    while(left <= i && h[i] >= h[center]) {
-        width++;
-        i--;
+        ret = max(ret, width * height);
     }
-    while(j <= right && h[j] >= h[center]) {
-        width++;
-        j++;
-    }
-    return max(ret, h[center] * width);
+    return ret;
 }
 
 int main()
