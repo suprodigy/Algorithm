@@ -36,12 +36,9 @@ public class Solution {
 			for (int i=0; i<N; i++) {
 				if (i == 0) {
 					isPossible[i] = elemSet.contains(str.substring(i, i+1));
-				} else if (i == 1){
-					isPossible[i] = (isPossible[i-1] && elemSet.contains(str.substring(i, i+1)))
-							|| elemSet.contains(str.substring(i-1, i+1));
 				} else {
 					isPossible[i] = (isPossible[i-1] && elemSet.contains(str.substring(i, i+1)))
-							|| (isPossible[i-2] && elemSet.contains(str.substring(i-1, i+1)));
+							|| ((i > 1 && isPossible[i-2]) && elemSet.contains(str.substring(i-1, i+1)));
 				}
 			}
 			
