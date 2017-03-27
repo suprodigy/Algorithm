@@ -1,6 +1,9 @@
 package game_2048;
 
 import java.io.FileInputStream;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
@@ -8,50 +11,90 @@ public class Main {
 	public static int N;
 	
 	public static void go(int[][] a, int cnt) {
-		if (cnt == 5) {
+		if (cnt == 10) {
 			return;
 		}
 		
-		// Case UP
-		boolean flag = false;
-		int[][] temp1 = new int[N][N];
-		for (int i=0; i<N; i++) {
-			System.arraycopy(a[i], 0, temp1[i], 0, a[i].length);
+		if (promising(a)) {
+			// Case UP
+			boolean flag = false;
+			int[][] temp1 = new int[N][N];
+			for (int i=0; i<N; i++) {
+				System.arraycopy(a[i], 0, temp1[i], 0, a[i].length);
+			}
+			flag = mergeUp(temp1);
+			if (flag) {
+				go(temp1, cnt+1);
+			}
+			
+			// Case DOWN
+			int[][] temp2 = new int[N][N];
+			for (int i=0; i<N; i++) {
+				System.arraycopy(a[i], 0, temp2[i], 0, a[i].length);
+			}
+			flag = mergeDown(temp2);
+			if (flag) {
+				go(temp2, cnt+1);
+			}
+			
+			// Case RIGHT
+			int[][] temp3 = new int[N][N];
+			for (int i=0; i<N; i++) {
+				System.arraycopy(a[i], 0, temp3[i], 0, a[i].length);
+			}
+			flag = mergeRight(temp3);
+			if (flag) {
+				go(temp3, cnt+1);
+			}
+			
+			// Case LEFT
+			flag = false;
+			int[][] temp4 = new int[N][N];
+			for (int i=0; i<N; i++) {
+				System.arraycopy(a[i], 0, temp4[i], 0, a[i].length);
+			}
+			flag = mergeLeft(temp4);
+			if (flag) {
+				go(temp4, cnt+1);
+			}
 		}
-		flag = mergeUp(temp1);
-		if (flag) {
-			go(temp1, cnt+1);
+	}
+	
+	public static boolean promising(int[][] a) {
+		Map<Integer, Integer> map = new HashMap<>();
+		int[] d = new int[30];
+		Arrays.fill(d, 0);
+		
+		int num = 0;
+		for (int i=0; i<30; i++) {
+			map.put((int)Math.pow(2, num), num);
+			num++;
 		}
 		
-		// Case DOWN
-		int[][] temp2 = new int[N][N];
 		for (int i=0; i<N; i++) {
-			System.arraycopy(a[i], 0, temp2[i], 0, a[i].length);
-		}
-		flag = mergeDown(temp2);
-		if (flag) {
-			go(temp2, cnt+1);
+			for (int j=0; j<N; j++) {
+				if (a[i][j] != 0){
+					d[map.get(a[i][j])]++;
+				}
+			}
 		}
 		
-		// Case RIGHT
-		int[][] temp3 = new int[N][N];
-		for (int i=0; i<N; i++) {
-			System.arraycopy(a[i], 0, temp3[i], 0, a[i].length);
-		}
-		flag = mergeRight(temp3);
-		if (flag) {
-			go(temp3, cnt+1);
+		int max = 0;
+		for (int i=0; i<30; i++) {
+			if (i != 30 && d[i] != 0) {
+				d[i+1] += (d[i] / 2);
+				d[i] %= 2;
+			}
+			
+			if (d[i] != 0) {
+				max = Math.max(max, i);
+			}
 		}
 		
-		// Case LEFT
-		flag = false;
-		int[][] temp4 = new int[N][N];
-		for (int i=0; i<N; i++) {
-			System.arraycopy(a[i], 0, temp4[i], 0, a[i].length);
-		}
-		flag = mergeLeft(temp4);
-		if (flag) {
-			go(temp4, cnt+1);
+		if (max != 0 && ans < (int)Math.pow(2, max)) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 	
@@ -176,7 +219,7 @@ public class Main {
 		boolean flag = moveLeft(a);
 		for (int i=0; i<N; i++) {
 			for (int j=0; j<N-1; j++) {
-				if (a[i][j] == a[i][j+1]) {
+				if (a[i][j] != 0 && a[i][j] == a[i][j+1]) {
 					flag = true;
 					a[i][j] += a[i][j+1];
 					a[i][j+1] = 0;
