@@ -14,7 +14,7 @@ public class Main {
 		int N = sc.nextInt();
 		
 		cow = new int[11];
-		Arrays.fill(cow, -1);
+		Arrays.fill(cow,  -1);
 		
 		int ans = 0;
 		for (int i=0; i<N; i++) {
