@@ -1,5 +1,3 @@
-srbvaffefeczevaluxv
-3
-bake
-bread
-cookie
+4
+120 110 140 150
+485
